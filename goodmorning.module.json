@@ -1,0 +1,40 @@
+{
+  "name": "gm-payments",
+  "version": "0.1.1",
+  "kind": "backend",
+  "backend_package": "gm-payments",
+  "python_requires": ["stripe>=12,<13"],
+  "node_requires": [],
+  "env": [
+    {"key": "PAYMENT_PROVIDER", "required": true, "default": "stripe"}
+  ],
+  "required_secrets": {
+    "STRIPE_SECRET_KEY": {
+      "source": "GOODMORNING_MANAGED",
+      "binding": "goodmorning/stripe-secret-key",
+      "target": "backend"
+    },
+    "STRIPE_WEBHOOK_SECRET": {
+      "source": "GOODMORNING_MANAGED",
+      "binding": "goodmorning/stripe-webhook-secret",
+      "target": "backend"
+    }
+  },
+  "dependencies": [],
+  "migrations": {"mode": "sql", "path": "migrations", "minimum_schema": 1},
+  "compatibility": {
+    "python": ">=3.12",
+    "node": ">=20",
+    "factory_api": "^1.0",
+    "products": ["*"]
+  },
+  "entrypoints": {"backend": "gm_payments:create_app"},
+  "deployment_modes": ["embedded", "service"],
+  "default_deployment_mode": "embedded",
+  "resource_requirements": [
+    {"name": "postgres", "kind": "postgresql", "resource_name": "product-postgres", "shared": true}
+  ],
+  "bindings": [
+    {"key": "DATABASE_URL", "source": "database_url", "requirement": "postgres", "target": "backend"}
+  ]
+}
