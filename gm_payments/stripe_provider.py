@@ -53,8 +53,11 @@ class StripeProvider:
         }
         if customer_email:
             params["customer_email"] = customer_email
-        request_options = {"idempotency_key": idempotency_key} if idempotency_key else None
-        session = self._stripe.checkout.Session.create(**params, **({"options": request_options} if request_options else {}))
+        if idempotency_key:
+            # stripe-python extracts this SDK request option and sends it as an
+            # Idempotency-Key header instead of a Checkout Session parameter.
+            params["idempotency_key"] = idempotency_key
+        session = self._stripe.checkout.Session.create(**params)
         return CheckoutSession(
             id=str(_value(session, "id")),
             url=_value(session, "url"),

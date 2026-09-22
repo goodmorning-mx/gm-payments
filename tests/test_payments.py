@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
+from stripe._request_options import extract_options_from_dict
 
 from gm_payments.api import create_app
 from gm_payments.contracts import CheckoutSession, PaymentLineItem, PaymentStatus, Refund, WebhookEvent
@@ -113,8 +114,13 @@ def test_stripe_provider_uses_checkout_payment_mode_and_metadata():
     result = provider.create_checkout_session(
         line_items=[PaymentLineItem(description="x", unit_amount=100, quantity=1)],
         currency="USD", success_url="https://ok", cancel_url="https://cancel",
-        customer_email=None, metadata={"product_id": "p", "user_id": "u"}, idempotency_key=None,
+        customer_email=None, metadata={"product_id": "p", "user_id": "u"}, idempotency_key="checkout-idem-1",
     )
     assert result.id == "cs_1"
     assert Session.kwargs["mode"] == "payment"
     assert Session.kwargs["metadata"]["user_id"] == "u"
+    assert Session.kwargs["idempotency_key"] == "checkout-idem-1"
+    assert "options" not in Session.kwargs
+    sdk_options, checkout_params = extract_options_from_dict(Session.kwargs)
+    assert sdk_options["idempotency_key"] == "checkout-idem-1"
+    assert "idempotency_key" not in checkout_params
