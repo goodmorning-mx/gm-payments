@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gm-payments"
-version = "0.1.0"
+version = "0.1.1"
 description = "Reusable GoodMorning payments module with Stripe support"
 requires-python = ">=3.12"
 dependencies = [

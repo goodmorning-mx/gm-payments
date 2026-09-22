@@ -1,6 +1,6 @@
 {
   "name": "gm-payments",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "kind": "backend",
   "backend_package": "gm-payments",
   "python_requires": ["stripe>=12,<13"],
